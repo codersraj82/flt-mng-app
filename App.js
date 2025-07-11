@@ -13,9 +13,9 @@ import {
   Pressable,
   Modal,
 } from "react-native";
-import * as Print from "expo-print";
-import * as Sharing from "expo-sharing";
-import DateTimePicker from "@react-native-datetimepicker/datetimepicker";
+// import * as Print from 'expo-print';
+// import * as Sharing from 'expo-sharing';
+import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 
 const API_URL =
@@ -92,36 +92,31 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const exportToPDF = async () => {
-    const headers = data[0];
-    const rows = filteredData
-      .slice(1)
-      .map(
-        (row) => `
-      <tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>
-    `
-      )
-      .join("");
+  // const exportToPDF = async () => {
+  //   const headers = data[0];
+  //   const rows = filteredData.slice(1).map(row => `
+  //     <tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>
+  //   `).join('');
 
-    const html = `
-      <html>
-        <body>
-          <h1>Filtered Faults Report</h1>
-          <table border="1" style="width: 100%; border-collapse: collapse;">
-            <thead>
-              <tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr>
-            </thead>
-            <tbody>
-              ${rows}
-            </tbody>
-          </table>
-        </body>
-      </html>
-    `;
+  //   const html = `
+  //     <html>
+  //       <body>
+  //         <h1>Filtered Faults Report</h1>
+  //         <table border="1" style="width: 100%; border-collapse: collapse;">
+  //           <thead>
+  //             <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+  //           </thead>
+  //           <tbody>
+  //             ${rows}
+  //           </tbody>
+  //         </table>
+  //       </body>
+  //     </html>
+  //   `;
 
-    const { uri } = await Print.printToFileAsync({ html });
-    await Sharing.shareAsync(uri);
-  };
+  //   const { uri } = await Print.printToFileAsync({ html });
+  //   await Sharing.shareAsync(uri);
+  // };
 
   return (
     <ScrollView
@@ -161,19 +156,11 @@ export default function App() {
           }}
         />
       )}
-      <Button title="Export Filtered Faults to PDF" onPress={exportToPDF} />
+      {/* <Button title="Export Filtered Faults to PDF" onPress={exportToPDF} /> */}
+
+      {/* ... rest of UI remains the same */}
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: 10, marginTop: 40 },
-  header: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 4,
-  },
-});
+// Keep styles as they are
