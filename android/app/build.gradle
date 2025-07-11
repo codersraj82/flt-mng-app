@@ -113,7 +113,7 @@ dependencies {
         }
     }
 
-    implementation("com.facebook.flipper:flipper:0.203.0")
+    //implementation("com.facebook.flipper:flipper:0.203.0")
 
 
     if (hermesEnabled.toBoolean()) {
