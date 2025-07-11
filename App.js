@@ -13,6 +13,7 @@ import {
   Pressable,
   Modal,
 } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 
 const API_URL =
@@ -25,6 +26,7 @@ export default function App() {
   const [searchStatus, setSearchStatus] = useState("");
   const [searchDate, setSearchDate] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [form, setForm] = useState({
     rowNumber: "",
     docketNo: "",
@@ -65,7 +67,9 @@ export default function App() {
       const statusMatch = searchStatus
         ? row[7]?.toLowerCase().includes(searchStatus.toLowerCase())
         : true;
-      const dateMatch = searchDate ? row[3]?.startsWith(searchDate) : true;
+      const dateMatch = searchDate
+        ? row[3]?.startsWith(searchDate.split(" ")[0])
+        : true;
       return routeMatch && statusMatch && dateMatch;
     });
     setFilteredData([data[0], ...filtered]);
@@ -80,6 +84,17 @@ export default function App() {
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const onDateChange = (event, selectedDate) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      const dateTimeString = selectedDate
+        .toISOString()
+        .slice(0, 16)
+        .replace("T", " ");
+      setSearchDate(dateTimeString);
+    }
+  };
 
   return (
     <ScrollView
@@ -101,12 +116,18 @@ export default function App() {
         onChangeText={(text) => setSearchStatus(text)}
         style={styles.input}
       />
-      <TextInput
-        placeholder="Filter by Fault Date (YYYY-MM-DD)"
-        value={searchDate}
-        onChangeText={(text) => setSearchDate(text)}
-        style={styles.input}
-      />
+      <Pressable onPress={() => setShowDatePicker(true)} style={styles.input}>
+        <Text>{searchDate || "Filter by Fault Date & Time (tap to pick)"}</Text>
+      </Pressable>
+      {showDatePicker && (
+        <DateTimePicker
+          value={searchDate ? new Date(searchDate) : new Date()}
+          mode="datetime"
+          display="default"
+          onChange={onDateChange}
+        />
+      )}
+
       {/* <Button title="Export Filtered Faults to PDF" onPress={exportToPDF} /> */}
 
       {/* ... rest of UI remains the same */}
