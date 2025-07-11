@@ -13,9 +13,6 @@ import {
   Pressable,
   Modal,
 } from "react-native";
-// import * as Print from 'expo-print';
-// import * as Sharing from 'expo-sharing';
-import DateTimePicker from "@react-native-community/datetimepicker";
 import axios from "axios";
 
 const API_URL =
@@ -26,8 +23,7 @@ export default function App() {
   const [filteredData, setFilteredData] = useState([]);
   const [searchRoute, setSearchRoute] = useState("");
   const [searchStatus, setSearchStatus] = useState("");
-  const [searchDateObj, setSearchDateObj] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [searchDate, setSearchDate] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [form, setForm] = useState({
     rowNumber: "",
@@ -41,11 +37,6 @@ export default function App() {
     status: "",
     initialAssessment: "",
     servicesDown: "",
-  });
-  const [pickerVisible, setPickerVisible] = useState({
-    faultDateTime: false,
-    handoverDateTime: false,
-    clearanceDateTime: false,
   });
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -74,9 +65,7 @@ export default function App() {
       const statusMatch = searchStatus
         ? row[7]?.toLowerCase().includes(searchStatus.toLowerCase())
         : true;
-      const dateMatch = searchDateObj
-        ? row[3]?.startsWith(searchDateObj.toISOString().split("T")[0])
-        : true;
+      const dateMatch = searchDate ? row[3]?.startsWith(searchDate) : true;
       return routeMatch && statusMatch && dateMatch;
     });
     setFilteredData([data[0], ...filtered]);
@@ -84,39 +73,13 @@ export default function App() {
 
   useEffect(() => {
     filterResults();
-  }, [searchRoute, searchStatus, searchDateObj, data]);
+  }, [searchRoute, searchStatus, searchDate, data]);
 
   useEffect(() => {
     fetchData();
     const interval = setInterval(fetchData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
-
-  // const exportToPDF = async () => {
-  //   const headers = data[0];
-  //   const rows = filteredData.slice(1).map(row => `
-  //     <tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>
-  //   `).join('');
-
-  //   const html = `
-  //     <html>
-  //       <body>
-  //         <h1>Filtered Faults Report</h1>
-  //         <table border="1" style="width: 100%; border-collapse: collapse;">
-  //           <thead>
-  //             <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
-  //           </thead>
-  //           <tbody>
-  //             ${rows}
-  //           </tbody>
-  //         </table>
-  //       </body>
-  //     </html>
-  //   `;
-
-  //   const { uri } = await Print.printToFileAsync({ html });
-  //   await Sharing.shareAsync(uri);
-  // };
 
   return (
     <ScrollView
@@ -138,24 +101,12 @@ export default function App() {
         onChangeText={(text) => setSearchStatus(text)}
         style={styles.input}
       />
-      <Pressable onPress={() => setShowDatePicker(true)} style={styles.input}>
-        <Text>
-          {searchDateObj
-            ? `Filter Date: ${searchDateObj.toISOString().split("T")[0]}`
-            : "Filter by Fault Date"}
-        </Text>
-      </Pressable>
-      {showDatePicker && (
-        <DateTimePicker
-          value={searchDateObj || new Date()}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) => {
-            setShowDatePicker(false);
-            if (selectedDate) setSearchDateObj(selectedDate);
-          }}
-        />
-      )}
+      <TextInput
+        placeholder="Filter by Fault Date (YYYY-MM-DD)"
+        value={searchDate}
+        onChangeText={(text) => setSearchDate(text)}
+        style={styles.input}
+      />
       {/* <Button title="Export Filtered Faults to PDF" onPress={exportToPDF} /> */}
 
       {/* ... rest of UI remains the same */}
