@@ -113,7 +113,8 @@ dependencies {
         }
     }
 
-    implementation("com.facebook.react:flipper-integration")
+    implementation("com.facebook.flipper:flipper:0.203.0")
+
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
